@@ -1,18 +1,28 @@
-package com.rpej.security.Auth;
+package com.rpej.security.dtoAuth;
 
 public class RegisterRequest {
     private String username;
     private String password;
+    private String email;
     private String firstname;
     private String lastname;
     private String country;
 
-    public RegisterRequest(String username, String password, String firstname, String lastname, String country) {
+    public RegisterRequest(String username, String email, String password, String firstname, String lastname, String country) {
         this.username = username;
+        this.email = email;
         this.password = password;
         this.firstname = firstname;
         this.lastname = lastname;
         this.country = country;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsername() {

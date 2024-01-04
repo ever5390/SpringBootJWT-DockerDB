@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,15 +18,15 @@ public class User implements UserDetails {
     private Integer id;
 
     @Basic
-    @Column(nullable = false)
+    @NotBlank(message = "username field cannot be empty")
     private String username;
 
     @Basic
-    @Column(nullable = false)
+    @NotBlank(message = "email field cannot be empty")
     private String email;
-    @Column(nullable = false)
     private String lastname;
 
+    @NotBlank(message = "firstname field cannot be empty")
     private String firstname;
 
     private String country;
@@ -35,9 +36,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public User(Integer id, String username, String lastname, String firstname, String country, String password, Role role) {
+    public User(Integer id, String username, String email, String lastname, String firstname, String country, String password, Role role) {
         this.id = id;
         this.username = username;
+        this.email = email;
         this.lastname = lastname;
         this.firstname = firstname;
         this.country = country;
@@ -50,6 +52,7 @@ public class User implements UserDetails {
     public User(Builder builder) {
         this.id = builder.id;
         this.username = builder.username;
+        this.email = builder.email;
         this.lastname = builder.lastname;
         this.firstname = builder.firstname;
         this.country = builder.country;
@@ -96,6 +99,7 @@ public class User implements UserDetails {
         private  Integer id;
         private  String username;
         private  String lastname;
+        private  String email;
         private  String firstname;
         private  String country;
         private  String password;
@@ -108,6 +112,11 @@ public class User implements UserDetails {
 
         public Builder username(String username) {
             this.username = username;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
             return this;
         }
 
@@ -147,6 +156,7 @@ public class User implements UserDetails {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", firstname='" + firstname + '\'' +
                 ", country='" + country + '\'' +

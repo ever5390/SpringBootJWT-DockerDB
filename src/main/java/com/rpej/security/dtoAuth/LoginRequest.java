@@ -1,4 +1,4 @@
-package com.rpej.security.Auth;
+package com.rpej.security.dtoAuth;
 
 public class LoginRequest {
     private String username;
