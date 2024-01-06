@@ -4,6 +4,7 @@ import com.rpej.security.Exceptions.domain.EmailExistsException;
 import com.rpej.security.Exceptions.domain.UserNameExistsException;
 import com.rpej.security.Exceptions.domain.UserNameNotFoundException;
 import com.rpej.security.dtoAuth.HttpResponse;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestControllerAdvice
 public class ExceptionHandling {
@@ -36,6 +39,11 @@ public class ExceptionHandling {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<HttpResponse> badCredentialsException (BadCredentialsException exception) {
         return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<HttpResponse> tokenExpiredException(ExpiredJwtException exception) {
+        return createHttpResponse(UNAUTHORIZED, exception.getMessage());
     }
 
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {

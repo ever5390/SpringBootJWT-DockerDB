@@ -14,11 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.rpej.security.User.UserRepository;
 
 @Configuration
-public class ApplicationConfig {
+public class SecurityConfigBeans {
 
     private final UserRepository userRepository;
     
-    public ApplicationConfig(UserRepository userRepository) {
+    public SecurityConfigBeans(UserRepository userRepository) {
 		super();
 		this.userRepository = userRepository;
 	}

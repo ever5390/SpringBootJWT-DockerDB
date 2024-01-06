@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import com.rpej.security.Jwt.JwtService;
 import com.rpej.security.User.UserRepository;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -42,10 +44,14 @@ public class AuthService {
 	}
 	
     public AuthResponse login(LoginRequest request) throws UserNameNotFoundException {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        UserDetails user = userRepository.findByUsername(request.getUsername()).orElseThrow();
+        //Empleamos el authentication Manager configurado @Bean, y le pasamos el UserNamePass... con los parámetros requeridos,
+        //Este devuelve un tipo AuthenticationManager ya que lo implementa.
+        //Internamente este AuthenticationManager utiliza una lista de mecanismos de authenticación y nosotros ya inyectamos el DaoAuthenticationProvider.
 
-        String token=jwtService.getToken(user);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+
+        User user = userRepository.findByUsername(request.getUsername()).get();
+        String token=jwtService.generateToken(user);
         return new AuthResponse.Builder()
             .token(token)
             .build();
@@ -61,7 +67,7 @@ public class AuthService {
             .firstname(request.getFirstname())
             .lastname(request.getLastname())
             .country(request.getCountry())
-            .role(Role.USER)
+            .role(Role.ADMIN)
             .build();
 
         userRepository.save(user);
