@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1")
 public class DemoController {
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('user:read')")
     @PostMapping(value = "demo")
     public String welcome()
     {

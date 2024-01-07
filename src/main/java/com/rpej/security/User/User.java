@@ -1,5 +1,6 @@
 package com.rpej.security.User;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -7,7 +8,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 @Entity
 @Table(name="user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "email"})})
@@ -33,36 +38,121 @@ public class User implements UserDetails {
 
     private String password;
 
+    /*
     @Enumerated(EnumType.STRING)
     private Role role;
+*/
+    private String role;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy hh:mm:ss", timezone = "America/New_York")
+    private Date lastLoginDate;
 
-    public User(Integer id, String username, String email, String lastname, String firstname, String country, String password, Role role) {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy hh:mm:ss", timezone = "America/New_York")
+    private Date lastLoginDateDisplay;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy hh:mm:ss", timezone = "America/New_York")
+    private Date joinDate;
+    private String[] authorities;
+    private boolean isActive;
+    private boolean isNotLocked;
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
         this.id = id;
+    }
+
+    public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
         this.firstname = firstname;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
         this.country = country;
+    }
+
+    public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
         this.role = role;
+    }
+
+    public Date getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(Date lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
+    }
+
+    public Date getLastLoginDateDisplay() {
+        return lastLoginDateDisplay;
+    }
+
+    public void setLastLoginDateDisplay(Date lastLoginDateDisplay) {
+        this.lastLoginDateDisplay = lastLoginDateDisplay;
+    }
+
+    public Date getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(Date joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public void setAuthorities(String[] authorities) {
+        this.authorities = authorities;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public void setNotLocked(boolean notLocked) {
+        isNotLocked = notLocked;
     }
 
     public User() {}
 
-    public User(Builder builder) {
-        this.id = builder.id;
-        this.username = builder.username;
-        this.email = builder.email;
-        this.lastname = builder.lastname;
-        this.firstname = builder.firstname;
-        this.country = builder.country;
-        this.password = builder.password;
-        this.role = builder.role;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority((role.name())));
+        return stream(authorities).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override
@@ -82,7 +172,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.isNotLocked;
     }
 
     @Override
@@ -92,76 +182,8 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
-    }
-
-    public static class Builder {
-        private  Integer id;
-        private  String username;
-        private  String lastname;
-        private  String email;
-        private  String firstname;
-        private  String country;
-        private  String password;
-        private  Role role;
-
-        public Builder id(Integer id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder username(String username) {
-            this.username = username;
-            return this;
-        }
-
-        public Builder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public Builder lastname(String lastname) {
-            this.lastname = lastname;
-            return this;
-        }
-
-        public Builder firstname(String firstname) {
-            this.firstname = firstname;
-            return this;
-        }
-
-        public Builder country(String country) {
-            this.country = country;
-            return this;
-        }
-
-        public Builder password(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public Builder role(Role role) {
-            this.role = role;
-            return this;
-        }
-
-        public User build() {
-            return new User(this);
-        }
+        return this.isActive;
     }
 
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", country='" + country + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                '}';
-    }
 }

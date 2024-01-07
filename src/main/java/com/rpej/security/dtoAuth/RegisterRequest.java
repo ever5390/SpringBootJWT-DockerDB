@@ -8,13 +8,45 @@ public class RegisterRequest {
     private String lastname;
     private String country;
 
-    public RegisterRequest(String username, String email, String password, String firstname, String lastname, String country) {
+    private String role;
+
+    private boolean isActive;
+
+    private boolean isNonLocked;
+
+    public RegisterRequest(String username, String password, String email, String firstname, String lastname, String country, String role, boolean isActive, boolean isNonLocked) {
         this.username = username;
-        this.email = email;
         this.password = password;
+        this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
         this.country = country;
+        this.role = role;
+        this.isActive = isActive;
+        this.isNonLocked = isNonLocked;
+    }
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public boolean isNonLocked() {
+        return isNonLocked;
+    }
+
+    public void setNonLocked(boolean nonLocked) {
+        isNonLocked = nonLocked;
     }
 
     public String getEmail() {

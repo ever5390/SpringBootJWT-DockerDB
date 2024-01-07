@@ -21,9 +21,12 @@ import org.springframework.stereotype.Service;
 import com.rpej.security.Jwt.JwtService;
 import com.rpej.security.User.UserRepository;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.rpej.security.User.Role.ROLE_ADMIN;
 
 @Service
 public class AuthService {
@@ -51,7 +54,11 @@ public class AuthService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
         User user = userRepository.findByUsername(request.getUsername()).get();
+        user.setLastLoginDateDisplay(user.getLastLoginDate());
+        user.setLastLoginDate(new Date());
+        userRepository.save(user);
         String token=jwtService.generateToken(user);
+
         return new AuthResponse.Builder()
             .token(token)
             .build();
@@ -60,16 +67,19 @@ public class AuthService {
     public HttpResponse register(RegisterRequest request) throws UserNameExistsException, EmailExistsException {
 
         validateUserAndEmailExists(request.getUsername(), request.getEmail());
-        User user = new User.Builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-            .password(passwordEncoder.encode( request.getPassword()))
-            .firstname(request.getFirstname())
-            .lastname(request.getLastname())
-            .country(request.getCountry())
-            .role(Role.ADMIN)
-            .build();
+        User user = new User();
 
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode( request.getPassword()));
+        user.setFirstname(request.getFirstname());
+        user.setLastname(request.getLastname());
+        user.setCountry(request.getCountry());
+        user.setJoinDate(new Date());
+        user.setActive(true);
+        user.setNotLocked(true);
+        user.setRole(Role.ROLE_ADMIN.name());
+        user.setAuthorities(Role.ROLE_ADMIN.getAuthorities());
         userRepository.save(user);
 
         return new HttpResponse(HttpStatus.CREATED.value(), HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase().toUpperCase().toString(),"Usuario creado exitosamente!!");
